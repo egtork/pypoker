@@ -17,8 +17,8 @@ class Rank(IntEnum):
     ACE = 14
 
 
-rank_to_str = [None, None, '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J',
-               'Q', 'K', 'A']
+rank_to_str = [None, None,
+               '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
 
 str_to_rank = {
     '2': 2,
