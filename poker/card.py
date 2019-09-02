@@ -10,9 +10,6 @@ class Suit(Enum):
     def __repr__(self):
         return self.value
 
-    def __str__(self):
-        return self.value
-
 
 str_to_suit = {
     "c": Suit.CLUBS,
