@@ -1,5 +1,5 @@
-from card import Card
 from random import shuffle as shuffle_fn
+from .card import Card
 
 SUITS = "shdc"
 RANKS = "AKQJT98765432"

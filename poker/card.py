@@ -1,4 +1,25 @@
-from enum import IntEnum
+from enum import Enum, IntEnum
+
+
+class Suit(Enum):
+    CLUBS = "c"
+    DIAMONDS = "d"
+    HEARTS = "h"
+    SPADES = "s"
+
+    def __repr__(self):
+        return self.value
+
+    def __str__(self):
+        return self.value
+
+
+str_to_suit = {
+    "c": Suit.CLUBS,
+    "d": Suit.DIAMONDS,
+    "h": Suit.HEARTS,
+    "s": Suit.SPADES,
+}
 
 
 class Rank(IntEnum):
@@ -17,32 +38,47 @@ class Rank(IntEnum):
     ACE = 14
 
 
-rank_to_str = [None, None,
-               '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
+rank_to_str = [
+    None,
+    None,
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "T",
+    "J",
+    "Q",
+    "K",
+    "A",
+]
 
 str_to_rank = {
-    '2': 2,
-    '3': 3,
-    '4': 4,
-    '5': 5,
-    '6': 6,
-    '7': 7,
-    '8': 8,
-    '9': 9,
-    'T': 10,
-    'J': 11,
-    'Q': 12,
-    'K': 13,
-    'A': 14,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "T": 10,
+    "J": 11,
+    "Q": 12,
+    "K": 13,
+    "A": 14,
 }
 
 
 class Card:
     def __init__(self, s: str):
         assert len(s) == 2
-        assert s[1] in ('c', 'd', 'h', 's')
+        assert s[1] in ("c", "d", "h", "s")
         self.rank = str_to_rank[s[0]]
-        self.suit = s[1]
+        self.suit = str_to_suit[s[1]]
 
     def __eq__(self, other):
         return self.rank == other.rank
@@ -63,4 +99,4 @@ class Card:
         return self.rank <= other.rank
 
     def __repr__(self):
-        return rank_to_str[self.rank] + self.suit
+        return rank_to_str[self.rank] + self.suit.value

@@ -1,8 +1,7 @@
 from collections import defaultdict
 from enum import Enum, auto
-import suit
-from card import Card, Rank
 from typing import List
+from .card import Card, Rank, Suit
 
 
 class HandRank(Enum):
@@ -18,8 +17,8 @@ class HandRank(Enum):
 
 
 def is_sorted(cards):
-    for i in range(len(cards)-1):
-        if cards[i+1] > cards[i]:
+    for i in range(len(cards) - 1):
+        if cards[i + 1] > cards[i]:
             return False
     return True
 
@@ -53,25 +52,25 @@ def best_full_house_hand(cards: List[Card]):
     assert is_sorted(cards), "Cards not sorted."
     trips_cards = None
     for i in range(len(cards) - 2):
-        if cards[i] == cards[i+1] == cards[i+2]:
-            trips_cards = [cards[i], cards[i+1], cards[i+2]]
-            kickers = cards[:i] + cards[i+3:]
+        if cards[i] == cards[i + 1] == cards[i + 2]:
+            trips_cards = [cards[i], cards[i + 1], cards[i + 2]]
+            kickers = cards[:i] + cards[i + 3 :]
             break
     if not trips_cards:
         return None
-    for i in range(len(kickers)-1):
-        if kickers[i] == kickers[i+1]:
-            return trips_cards + [kickers[i], kickers[i+1]]
+    for i in range(len(kickers) - 1):
+        if kickers[i] == kickers[i + 1]:
+            return trips_cards + [kickers[i], kickers[i + 1]]
     return None
 
 
 def best_flush_hand(cards: List[Card]):
     assert is_sorted(cards), "Cards not sorted."
     suits = {
-        suit.HEARTS: [],
-        suit.SPADES: [],
-        suit.DIAMONDS: [],
-        suit.CLUBS: [],
+        Suit.HEARTS: [],
+        Suit.SPADES: [],
+        Suit.DIAMONDS: [],
+        Suit.CLUBS: [],
     }
     for card in cards:
         suits[card.suit].append(card)
@@ -85,10 +84,10 @@ def best_straight_hand(cards: List[Card]):
     i = 0
     while i < len(cards) - 3:
         run = [cards[i]]
-        while i < len(cards)-1:
-            if cards[i].rank == cards[i+1].rank:
+        while i < len(cards) - 1:
+            if cards[i].rank == cards[i + 1].rank:
                 i += 1
-            elif cards[i].rank == cards[i+1].rank + 1:
+            elif cards[i].rank == cards[i + 1].rank + 1:
                 i += 1
                 run.append(cards[i])
                 if len(run) == 5:
@@ -96,9 +95,11 @@ def best_straight_hand(cards: List[Card]):
             else:
                 i += 1
                 break
-    if (cards[0].rank == Rank.ACE
-            and run[0].rank == Rank.FIVE
-            and run[-1].rank == Rank.TWO):
+    if (
+        cards[0].rank == Rank.ACE
+        and run[0].rank == Rank.FIVE
+        and run[-1].rank == Rank.TWO
+    ):
         return run + [cards[0]]
     return None
 
@@ -106,9 +107,9 @@ def best_straight_hand(cards: List[Card]):
 def best_three_of_a_kind_hand(cards: List[Card]):
     assert is_sorted(cards), "Cards not sorted."
     for i in range(len(cards) - 2):
-        if cards[i] == cards[i+1] == cards[i+2]:
-            trips_cards = [cards[i], cards[i+1], cards[i+2]]
-            kickers = cards[:i] + cards[i+3:]
+        if cards[i] == cards[i + 1] == cards[i + 2]:
+            trips_cards = [cards[i], cards[i + 1], cards[i + 2]]
+            kickers = cards[:i] + cards[i + 3 :]
             return trips_cards + kickers[:2]
     return None
 
@@ -122,8 +123,10 @@ def best_two_pair_hand(cards: List[Card]):
         if len(ranks[card.rank]) == 2:
             if first_pair:
                 for kicker in cards:
-                    if (kicker.rank != first_pair[0].rank
-                            and kicker.rank != card.rank):
+                    if (
+                        kicker.rank != first_pair[0].rank
+                        and kicker.rank != card.rank
+                    ):
                         return first_pair + ranks[card.rank] + [kicker]
             else:
                 first_pair = ranks[card.rank]
@@ -133,15 +136,15 @@ def best_two_pair_hand(cards: List[Card]):
 def best_pair_hand(cards: List[Card]):
     assert is_sorted(cards), "Cards not sorted."
     for i in range(len(cards) - 1):
-        if cards[i] == cards[i+1]:
-            pair_cards = [cards[i], cards[i+1]]
-            kickers = cards[:i] + cards[i+2:]
+        if cards[i] == cards[i + 1]:
+            pair_cards = [cards[i], cards[i + 1]]
+            kickers = cards[:i] + cards[i + 2 :]
             return pair_cards + kickers[:3]
     return None
 
 
 def best_high_card_hand(cards: List[Card]):
-    assert is_sorted(cards),  "Cards not sorted."
+    assert is_sorted(cards), "Cards not sorted."
     return cards[:5]
 
 
