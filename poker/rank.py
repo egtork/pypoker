@@ -54,7 +54,7 @@ def best_full_house_hand(cards: List[Card]):
     for i in range(len(cards) - 2):
         if cards[i] == cards[i + 1] == cards[i + 2]:
             trips_cards = [cards[i], cards[i + 1], cards[i + 2]]
-            kickers = cards[:i] + cards[i + 3 :]
+            kickers = cards[:i] + cards[i+3:]
             break
     if not trips_cards:
         return None
@@ -109,7 +109,7 @@ def best_three_of_a_kind_hand(cards: List[Card]):
     for i in range(len(cards) - 2):
         if cards[i] == cards[i + 1] == cards[i + 2]:
             trips_cards = [cards[i], cards[i + 1], cards[i + 2]]
-            kickers = cards[:i] + cards[i + 3 :]
+            kickers = cards[:i] + cards[i+3:]
             return trips_cards + kickers[:2]
     return None
 
@@ -138,7 +138,7 @@ def best_pair_hand(cards: List[Card]):
     for i in range(len(cards) - 1):
         if cards[i] == cards[i + 1]:
             pair_cards = [cards[i], cards[i + 1]]
-            kickers = cards[:i] + cards[i + 2 :]
+            kickers = cards[:i] + cards[i+2:]
             return pair_cards + kickers[:3]
     return None
 
