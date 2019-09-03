@@ -76,22 +76,13 @@ class Card:
         self.suit = str_to_suit[s[1]]
 
     def __eq__(self, other):
-        return self.rank == other.rank
-
-    def __ne__(self, other):
-        return self.rank != other.rank
+        return self.rank == other.rank and self.suit == other.suit
 
     def __lt__(self, other):
         return self.rank < other.rank
 
     def __gt__(self, other):
         return self.rank > other.rank
-
-    def __gte__(self, other):
-        return self.rank >= other.rank
-
-    def __lte__(self, other):
-        return self.rank <= other.rank
 
     def __repr__(self):
         return str(self.rank) + str(self.suit)

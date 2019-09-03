@@ -23,21 +23,30 @@ def is_sorted(cards):
     return True
 
 
-def best_straight_flush_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
-    suits = defaultdict(list)
-    flush_suit = None
+def get_flush_cards(cards):
+    suits = {
+        Suit.HEARTS: [],
+        Suit.SPADES: [],
+        Suit.DIAMONDS: [],
+        Suit.CLUBS: [],
+    }
     for card in cards:
         suits[card.suit].append(card)
-        if len(suits[card.suit]) == 5:
-            flush_suit = card.suit
-    if flush_suit:
-        return best_straight_hand(suits[flush_suit])
+    for suit in suits.keys():
+        if len(suits[suit]) >= 5:
+            return suits[suit]
     return None
 
 
+def best_straight_flush_hand(cards: List[Card]):
+    flush_cards = get_flush_cards(cards)
+    if flush_cards:
+        straight_flush_hand = best_straight_hand(flush_cards)
+        return straight_flush_hand, flush_cards[:5]
+    return None, None
+
+
 def best_four_of_a_kind_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
     ranks = defaultdict(list)
     for card in cards:
         ranks[card.rank].append(card)
@@ -49,38 +58,28 @@ def best_four_of_a_kind_hand(cards: List[Card]):
 
 
 def best_full_house_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
     trips_cards = None
     for i in range(len(cards) - 2):
-        if cards[i] == cards[i + 1] == cards[i + 2]:
+        if cards[i].rank == cards[i + 1].rank == cards[i + 2].rank:
             trips_cards = [cards[i], cards[i + 1], cards[i + 2]]
-            kickers = cards[:i] + cards[i+3:]
+            kickers = cards[:i] + cards[i + 3 :]
             break
     if not trips_cards:
         return None
     for i in range(len(kickers) - 1):
-        if kickers[i] == kickers[i + 1]:
+        if kickers[i].rank == kickers[i + 1].rank:
             return trips_cards + [kickers[i], kickers[i + 1]]
     return None
 
 
 def best_flush_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
-    suits = {
-        Suit.HEARTS: [],
-        Suit.SPADES: [],
-        Suit.DIAMONDS: [],
-        Suit.CLUBS: [],
-    }
-    for card in cards:
-        suits[card.suit].append(card)
-        if len(suits[card.suit]) == 5:
-            return suits[card.suit]
+    flush_cards = get_flush_cards(cards)
+    if flush_cards:
+        return flush_cards[:5]
     return None
 
 
 def best_straight_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
     i = 0
     while i < len(cards) - 3:
         run = [cards[i]]
@@ -105,66 +104,69 @@ def best_straight_hand(cards: List[Card]):
 
 
 def best_three_of_a_kind_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
     for i in range(len(cards) - 2):
-        if cards[i] == cards[i + 1] == cards[i + 2]:
+        if cards[i].rank == cards[i + 1].rank == cards[i + 2].rank:
             trips_cards = [cards[i], cards[i + 1], cards[i + 2]]
-            kickers = cards[:i] + cards[i+3:]
+            kickers = cards[:i] + cards[i + 3 :]
             return trips_cards + kickers[:2]
     return None
 
 
 def best_two_pair_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
-    ranks = defaultdict(list)
     first_pair = None
-    for card in cards:
-        ranks[card.rank].append(card)
-        if len(ranks[card.rank]) == 2:
+    i = 0
+    while i < len(cards) - 1:
+        if cards[i].rank == cards[i + 1].rank:
             if first_pair:
+                hand = first_pair + [cards[i], cards[i + 1]]
                 for kicker in cards:
-                    if (
-                        kicker.rank != first_pair[0].rank
-                        and kicker.rank != card.rank
-                    ):
-                        return first_pair + ranks[card.rank] + [kicker]
+                    if kicker not in hand:
+                        return hand + [kicker]
             else:
-                first_pair = ranks[card.rank]
+                first_pair = [cards[i], cards[i + 1]]
+            i += 1
+        i += 1
     return None
 
 
 def best_pair_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
     for i in range(len(cards) - 1):
-        if cards[i] == cards[i + 1]:
+        if cards[i].rank == cards[i + 1].rank:
             pair_cards = [cards[i], cards[i + 1]]
-            kickers = cards[:i] + cards[i+2:]
+            kickers = cards[:i] + cards[i + 2 :]
             return pair_cards + kickers[:3]
     return None
 
 
 def best_high_card_hand(cards: List[Card]):
-    assert is_sorted(cards), "Cards not sorted."
     return cards[:5]
 
 
-hand_functions = (
-    (best_straight_flush_hand, HandRank.STRAIGHT_FLUSH),
-    (best_four_of_a_kind_hand, HandRank.FOUR_OF_A_KIND),
-    (best_full_house_hand, HandRank.FULL_HOUSE),
-    (best_flush_hand, HandRank.FLUSH),
-    (best_straight_hand, HandRank.STRAIGHT),
-    (best_three_of_a_kind_hand, HandRank.THREE_OF_A_KIND),
-    (best_two_pair_hand, HandRank.TWO_PAIR),
-    (best_pair_hand, HandRank.PAIR),
-    (best_high_card_hand, HandRank.HIGH_CARD),
-)
-
-
-def make_hand(cards):
+def make_hand(cards: List[Card]):
     assert 5 <= len(cards) <= 7
     cards = sorted(cards, reverse=True)
-    for hand_fn, hand_rank in hand_functions:
-        hand = hand_fn(cards)
-        if hand:
-            return hand, hand_rank
+    hand, flush_hand = best_straight_flush_hand(cards)
+    if hand:
+        return hand, HandRank.STRAIGHT_FLUSH
+    hand = best_four_of_a_kind_hand(cards)
+    if hand:
+        return hand, HandRank.FOUR_OF_A_KIND
+    hand = best_full_house_hand(cards)
+    if hand:
+        return hand, HandRank.FULL_HOUSE
+    if flush_hand:
+        return flush_hand, HandRank.FLUSH
+    hand = best_straight_hand(cards)
+    if hand:
+        return hand, HandRank.STRAIGHT
+    hand = best_three_of_a_kind_hand(cards)
+    if hand:
+        return hand, HandRank.THREE_OF_A_KIND
+    hand = best_two_pair_hand(cards)
+    if hand:
+        return hand, HandRank.TWO_PAIR
+    hand = best_pair_hand(cards)
+    if hand:
+        return hand, HandRank.PAIR
+    hand = best_high_card_hand(cards)
+    return hand, HandRank.HIGH_CARD

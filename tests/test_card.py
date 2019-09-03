@@ -24,4 +24,5 @@ def test_card_to_str():
 def test_comparison():
     assert Card("Tc") < Card("Jc")
     assert Card("9h") > Card("4d")
-    assert Card("Qd") == Card("Qh")
+    assert Card("Qd") != Card("Qh")
+    assert Card("Qd") == Card("Qd")

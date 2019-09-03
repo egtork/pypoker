@@ -9,93 +9,98 @@ def test_best_high_card_hand():
 
 
 def test_best_pair_hand():
-    pair_tests = [
+    tests = [
         (hand("AhAdTh8d6s"), hand("AhAdTh8d6s", sort=False)),
         (hand("AhThTd8d6s"), hand("ThTdAh8d6s", sort=False)),
-        (hand("3d3sAhThTd8d6s"), hand("ThTdAh8d6s", sort=False)),
         (hand("AhTh8d6s6h"), hand("6s6hAhTh8d", sort=False)),
+        (hand("AhTh8d8s8h5d4s"), hand("8d8sAhTh8h", sort=False)),
+        (hand("3d3sAhThTd8d6s"), hand("ThTdAh8d6s", sort=False)),
         (hand("AhTh8d8s6s5d4d"), hand("8d8sAhTh6s", sort=False)),
         (hand("AhQdTh8d6s"), None),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_pair_hand(input) == expected_output
 
 
 def test_best_two_pair_hand():
-    pair_tests = [
+    tests = [
         (hand("TdThAsAc3d"), hand("AsAcTdTh3d", sort=False)),
+        (hand("TdThJdJhJs3d2d"), hand("JdJhTdThJs", sort=False)),
         (hand("TdThAsAc3d3hKs"), hand("AsAcTdThKs", sort=False)),
         (hand("AhQdTh8d6s"), None),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_two_pair_hand(input) == expected_output
 
 
 def test_best_three_of_a_kind_hand():
-    pair_tests = [
+    tests = [
         (hand("AhAdAs8d6s"), hand("AhAdAs8d6s", sort=False)),
         (hand("AhThTdTs6s"), hand("ThTdTsAh6s", sort=False)),
         (hand("3d3sAhThTdTs6s"), hand("ThTdTsAh6s", sort=False)),
-        (hand("AhTh6d6s6h"), hand("6s6h6dAhTh", sort=False)),
+        (hand("AhTh6d6s6h"), hand("6d6s6hAhTh", sort=False)),
+        (hand("QcQdQhQsAc"), hand("QcQdQhAcQs", sort=False)),
         (hand("AhTh8d8s8h5d4d"), hand("8d8s8hAhTh", sort=False)),
         (hand("AhQdTh8d6s"), None),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_three_of_a_kind_hand(input) == expected_output
 
 
 def test_best_straight_hand():
-    pair_tests = [
+    tests = [
         (hand("JdAhKhQdTd"), hand("AhKhQdJdTd", sort=False)),
         (hand("5hAh4d3d2s"), hand("5h4d3d2sAh", sort=False)),
         (hand("Ts9s7h6h5d4d3d"), hand("7h6h5d4d3d", sort=False)),
         (hand("Ts9s8h6h5d4d3d"), None),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_straight_hand(input) == expected_output
 
 
 def test_best_flush_hand():
-    pair_tests = [
+    tests = [
         (hand("3h4h6h7h8h"), hand("8h7h6h4h3h", sort=False)),
         (hand("2sAs5s6s9s"), hand("As9s6s5s2s", sort=False)),
         (hand("2sAs4d5s4h6s9s"), hand("As9s6s5s2s", sort=False)),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_flush_hand(input) == expected_output
 
 
 def test_best_full_house_hand():
-    pair_tests = [
+    tests = [
         (hand("3dAd3sAs3h"), hand("3d3s3hAdAs", sort=False)),
         (hand("Ad3sAs3hAh"), hand("AdAsAh3s3h", sort=False)),
+        (hand("Kd3sKs3hKh3d2d"), hand("KdKsKh3s3h", sort=False)),
         (hand("2d2hAd3sAs3hAh"), hand("AdAsAh3s3h", sort=False)),
         (hand("2d2h3d3h4d4hAh"), None),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_full_house_hand(input) == expected_output
 
 
 def test_best_four_of_a_kind_hand():
-    pair_tests = [
+    tests = [
         (hand("9d5h5s5c5d"), hand("5h5s5c5d9d", sort=False)),
         (hand("QhTsTdThTcAd3h"), hand("TsTdThTcAd", sort=False)),
         (hand("QhQdQsTsTdThAd"), None),
     ]
-    for input, expected_output in pair_tests:
+    for input, expected_output in tests:
         assert rank.best_four_of_a_kind_hand(input) == expected_output
 
 
 def test_best_straight_flush_hand():
-    pair_tests = [
+    tests = [
         (hand("ThJhQhKhAh"), hand("AhKhQhJhTh", sort=False)),
         (hand("Ah5h4h3h2h"), hand("5h4h3h2hAh", sort=False)),
         (hand("AhKhJhTh9h8h7h"), hand("JhTh9h8h7h", sort=False)),
         (hand("AhKhJhTh9h8h7d"), None),
         (hand("TdJhQhKhAh"), None),
     ]
-    for input, expected_output in pair_tests:
-        assert rank.best_straight_flush_hand(input) == expected_output
+    for input, expected_output in tests:
+        sf_hand, flush_hand = rank.best_straight_flush_hand(input)
+        assert sf_hand == expected_output
 
 
 def test_make_hand():
